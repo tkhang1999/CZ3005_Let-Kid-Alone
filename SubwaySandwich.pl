@@ -270,7 +270,7 @@ breads([italian_wheat, hearty_italian, honey_oat, parmesan_oregano, multigrain, 
 mains([ham, chicken, tuna, turkey, roast_beef, meatball, egg_mayo, italian_bmt, steak_and_cheese, veggie]).
 cheeses([american, monterrey, none]).
 vegs([cucumbers, green_bell_peppers, lettuce, red_onions, tomatoes, black_olives, jalapenos, pickles]).
-sauces([chipotle_southwest, ranch, bbq, chilli, tomato, redwine, mayonnaise, vinegar]).
-healthy_sauces([chipotle_southwest, ranch, redwine, vinegar]).
+sauces([chipotle_southwest, ranch, bbq, chilli, tomato_sauce, redwine, mayonnaise, vinegar]).
+healthy_sauces([chipotle_southwest, ranch, tomato_sauce, redwine, vinegar]).
 sides([chips, cookies, hashbrowns, fruit_crisps, yogurt]).
 drinks([fountain, mineral_water, orange_juice, green_tea, coffee, tea]).
