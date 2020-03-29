@@ -8,26 +8,26 @@
  */
 select_bread :-
     read(X),
-    selected(X, breads) -> nl, assert(bread(X));
+    selected(X, breads) -> nl, assertz(bread(X));
     write('Invalid bread, select again'), nl,
     select_bread.
 
 select_main :-
     read(X),
-    selected(X, mains) -> nl, assert(main(X));
+    selected(X, mains) -> nl, assertz(main(X));
     write('Invalid main, select again'), nl,
     select_main. 
 
 select_cheese :-
     read(X),
-    selected(X, cheeses) -> nl, assert(cheese(X));
+    selected(X, cheeses) -> nl, assertz(cheese(X));
     write('Invalid cheese, select again'), nl,
     select_cheese. 
 
 select_veg :-
     read(X),
     (not(X == 0) -> 
-        (selected(X, vegs) -> write(' (Enter 0 to finish selecting vegs)'), nl, assert(veg(X));
+        (selected(X, vegs) -> write(' (Enter 0 to finish selecting vegs)'), nl, assertz(veg(X));
         write('Invalid veg, select again'), nl),
         select_veg;
         true
@@ -36,7 +36,7 @@ select_veg :-
 select_sauce :-
     read(X),
     (not(X == 0) -> 
-        (selected(X, sauces) -> write(' (Enter 0 to finish selecting sauces)'), nl, assert(sauce(X));
+        (selected(X, sauces) -> write(' (Enter 0 to finish selecting sauces)'), nl, assertz(sauce(X));
         write('Invalid sauce, select again'), nl),
         select_sauce;
         true
@@ -45,7 +45,7 @@ select_sauce :-
 select_healthy_sauce :-
     read(X),
     (not(X == 0) -> 
-        (selected(X, healthy_sauces) -> write(' (Enter 0 to finish selecting healthy sauces)'), nl, assert(sauce(X));
+        (selected(X, healthy_sauces) -> write(' (Enter 0 to finish selecting healthy sauces)'), nl, assertz(sauce(X));
         write('Invalid healthy sauce, select again'), nl),
         select_healthy_sauce;
         true
@@ -54,7 +54,7 @@ select_healthy_sauce :-
 select_side :-
     read(X),
     (not(X == 0) -> 
-        (selected(X, sides) -> write(' (Enter 0 to finish selecting sides)'), nl, assert(side(X));
+        (selected(X, sides) -> write(' (Enter 0 to finish selecting sides)'), nl, assertz(side(X));
         write('Invalid sides, select again'), nl),
         select_side;
         true
@@ -63,7 +63,7 @@ select_side :-
 select_drink :-
     read(X),
     (not(X == 0) -> 
-        (selected(X, drinks) -> write(' (Enter 0 to finish selecting drinks)'), nl, assert(drink(X));
+        (selected(X, drinks) -> write(' (Enter 0 to finish selecting drinks)'), nl, assertz(drink(X));
         write('Invalid drinks, try again'), nl),
         select_drink;
         true
@@ -205,18 +205,18 @@ exec :-
     read(Meal),
     ((Meal == veggie) -> 
         write('meal = '), write(Meal), nl,
-        meal_veggie, assert(meal(veggie));
+        meal_veggie, assertz(meal(veggie));
         (Meal == healthy) ->
             write('meal = '), write(Meal), nl,
-            meal_healthy, assert(meal(healthy));
+            meal_healthy, assertz(meal(healthy));
             (Meal == vegan) ->
                 write('meal = '), write(Meal), nl,
-                meal_vegan, assert(meal(vegan));
+                meal_vegan, assertz(meal(vegan));
                 (Meal == value) ->
                     write('meal = '), write(Meal), nl,
-                    meal_value, assert(meal(value));
+                    meal_value, assertz(meal(value));
                     write('meal = normal'), nl,
-                    meal_normal, assert(meal(Meal))),
+                    meal_normal, assertz(meal(Meal))),
     write('------------------------------------------------'), nl,
     write('-------------------YOUR-ORDER-------------------'), nl,
     write('------------------------------------------------'), nl,
