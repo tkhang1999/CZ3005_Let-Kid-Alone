@@ -167,11 +167,11 @@ display :-
     atomic_list_concat(Cheeses, Cheese),
     write('Cheese: '), write(Cheese), nl,
     atomic_list_concat(Vegs, ',', Veg),
-    write('Veg: '), write(Veg), nl,
+    write('Vegs: '), write(Veg), nl,
     atomic_list_concat(Sauces, ',', Sauce),
-    write('Sauce: '), write(Sauce), nl,
+    write('Sauces: '), write(Sauce), nl,
     atomic_list_concat(Sides, ',', Side),
-    write('Side: '), write(Side), nl,
+    write('Sides: '), write(Side), nl,
     atomic_list_concat(Drinks, ',', Drink),
     write('Drinks: '), write(Drink), nl.
 
@@ -259,8 +259,8 @@ selected(X, cheeses) :- cheeses(L), member(X, L), write('cheese = '), write(X), 
 selected(X, vegs) :- vegs(L), member(X, L), write('veg = '), write(X), !.
 selected(X, sauces) :- sauces(L), member(X, L), write('sauce = '), write(X), !.
 selected(X, healthy_sauces) :- healthy_sauces(L), member(X, L), write('healthy sauce = '), write(X), !.
-selected(X, sides) :- sides(L), member(X, L), write('sides = '), write(X), !.
-selected(X, drinks) :- drinks(L), member(X, L), write('drinks = '), write(X), !.
+selected(X, sides) :- sides(L), member(X, L), write('side = '), write(X), !.
+selected(X, drinks) :- drinks(L), member(X, L), write('drink = '), write(X), !.
 
 /*
  * Possible choice of options for each category
@@ -269,7 +269,7 @@ breads([italian_wheat, hearty_italian, honey_oat, parmesan_oregano, multigrain, 
 mains([ham, chicken, tuna, turkey, roast_beef, meatball, egg_mayo, italian_bmt, steak_and_cheese, veggie]).
 cheeses([american, monterrey, none]).
 vegs([cucumbers, green_bell_peppers, lettuce, red_onions, tomatoes, black_olives, jalapenos, pickles]).
-sauces([chipotle_southwest, ranch, bbq, chilli, tomato_sauce, redwine, mayonnaise, vinegar]).
+sauces([chipotle_southwest, ranch, bbq, chilli_sauce, tomato_sauce, redwine, mayonnaise, vinegar]).
 healthy_sauces([chipotle_southwest, ranch, tomato_sauce, redwine, vinegar]).
 sides([chips, cookies, hashbrowns, fruit_crisps, yogurt]).
 drinks([fountain, mineral_water, orange_juice, green_tea, coffee, tea]).
