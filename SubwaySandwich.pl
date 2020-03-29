@@ -184,8 +184,8 @@ flush :- retract(main(_)), fail.
 flush :- retract(cheese(_)), fail.
 flush :- retract(veg(_)), fail.
 flush :- retract(sauce(_)), fail.
-flush :- retract(cookie(_)), fail.
-flush :- retract(addon(_)), fail.
+flush :- retract(side(_)), fail.
+flush :- retract(drink(_)), fail.
 
 /*
  * Start a Subway order
