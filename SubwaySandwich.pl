@@ -191,9 +191,9 @@ flush :- retract(addon(_)), fail.
  * Start a Subway order
  */
 start :-
-    write('----------------------------------------------'), nl,
-    write('--------------------SUBWAY--------------------'), nl,
-    write('----------------------------------------------'), nl,
+    write('-----------------------------------------------'), nl,
+    write('------------------START-ORDER------------------'), nl,
+    write('-----------------------------------------------'), nl,
     exec,
     end.
 
@@ -204,38 +204,38 @@ exec :-
     write('Please choose your meal type (normal, veggie, healthy, vegan, or value)?'), nl,
     read(Meal),
     ((Meal == veggie) -> 
-        write('meal = '), write(meal), nl,
+        write('meal = '), write(Meal), nl,
         meal_veggie, assert(meal(veggie));
         (Meal == healthy) ->
-            write('meal = '), write(meal), nl,
+            write('meal = '), write(Meal), nl,
             meal_healthy, assert(meal(healthy));
             (Meal == vegan) ->
-                write('meal = '), write(meal), nl,
+                write('meal = '), write(Meal), nl,
                 meal_vegan, assert(meal(vegan));
                 (Meal == value) ->
-                    write('meal = '), write(meal), nl,
+                    write('meal = '), write(Meal), nl,
                     meal_value, assert(meal(value));
                     write('meal = normal'), nl,
-                    meal_normal, assert(meal(normal))),
-    write('----------------------------------------------'), nl,
-    write('------------------YOUR-ORDER------------------'), nl,
-    write('----------------------------------------------'), nl,
+                    meal_normal, assert(meal(Meal))),
+    write('------------------------------------------------'), nl,
+    write('-------------------YOUR-ORDER-------------------'), nl,
+    write('------------------------------------------------'), nl,
     display.
 
 /*
  * End a Subway order
  */
 end :-
-    write('----------------------------------------------'),nl,
-    write('------------------END-SUBWAY------------------'),nl,
-    write('----------------------------------------------'),
+    write('-----------------------------------------------'), nl,
+    write('-------------------END-ORDER-------------------'), nl,
+    write('-----------------------------------------------'),
     flush. % flush all selected options
 
 /*
  * Display the list item
  */
 options_list([]). % empty list
-options_list([X]) :- write(X), write('.\n'). % final list item
+options_list([X]) :- write(X), write('.'), nl. % final list item
 options_list([X|Y]) :- write(X), write(', '), options_list(Y), !. % sublist item
 
 /*
