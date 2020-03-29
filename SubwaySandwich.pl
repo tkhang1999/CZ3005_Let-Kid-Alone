@@ -160,8 +160,6 @@ display :-
     get_selected(Meals, Breads, Mains, Cheeses, Vegs, Sauces, Sides, Drinks), 
     atomic_list_concat(Meals, Meal),
     write('Selected Meal: '), write(Meal), nl,
-
-    write('Your orders:'),nl,
     atomic_list_concat(Breads, Bread),
     write('Bread: '), write(Bread), nl,
     atomic_list_concat(Mains, Main),
@@ -220,6 +218,7 @@ exec :-
                     write('meal = normal'), nl,
                     meal_normal, assert(meal(normal))),
     write('----------------------------------------------'), nl,
+    write('------------------YOUR-ORDER------------------'), nl,
     write('----------------------------------------------'), nl,
     display.
 
