@@ -6,6 +6,12 @@
 /*
  * Interactive item selection for each category 
  */
+select_meal :-
+    read(X),
+    selected(X, meals) -> nl, assertz(meal(X));
+    write('Invalid meal, select again'), nl,
+    select_meal.
+
 select_bread :-
     read(X),
     selected(X, breads) -> nl, assertz(bread(X));
@@ -20,9 +26,12 @@ select_main :-
 
 select_cheese :-
     read(X),
-    selected(X, cheeses) -> nl, assertz(cheese(X));
-    write('Invalid cheese, select again'), nl,
-    select_cheese. 
+    (not(X == 0) ->
+        (selected(X, cheeses) ->  write(' (Enter 0 to finish selecting cheeses)'), nl, assertz(cheese(X));
+        write('Invalid cheese, select again'), nl),
+        select_cheese;
+        true
+    ). 
 
 select_veg :-
     read(X),
@@ -72,43 +81,48 @@ select_drink :-
 /*
  * Interactive query for each category
  */
+query_meal :-
+    write('Please choose meal: '), nl,
+    options(meals),
+    select_meal.
+
 query_bread :-
-    write('Please choose bread: '),nl,
+    write('Please choose bread: '), nl,
     options(breads),
     select_bread.
 
 query_main :-
-    write('Please choose main: '),nl,
+    write('Please choose main: '), nl,
     options(mains),
     select_main.
 
 query_cheese :-
-    write('Please choose cheese: '),nl,
+    write('Please choose cheese: '), nl,
     options(cheeses),
     select_cheese.
 
 query_veg :-
-    write('Please choose veg: '),nl,
+    write('Please choose veg: '), nl,
     options(vegs),
     select_veg.
 
 query_sauce :-
-    write('Please choose sauce: '),nl,
+    write('Please choose sauce: '), nl,
     options(sauces),
     select_sauce.
 
 query_healthy_sauce :-
-    write('Please choose healthy sauce: '),nl,
+    write('Please choose healthy sauce: '), nl,
     options(healthy_sauces),
     select_healthy_sauce.
 
 query_side :-
-    write('Please choose side: '),nl,
+    write('Please choose side: '), nl,
     options(sides),
     select_side.
 
 query_drink :-
-    write('Please choose drink: '),nl,
+    write('Please choose drink: '), nl,
     options(drinks),
     select_drink.
 
@@ -159,33 +173,33 @@ get_selected(Meals, Breads, Mains, Cheeses, Vegs, Sauces, Sides, Drinks) :-
 display :-
     get_selected(Meals, Breads, Mains, Cheeses, Vegs, Sauces, Sides, Drinks), 
     atomic_list_concat(Meals, Meal),
-    write('Selected Meal: '), write(Meal), nl,
+    write('Meal: '), write(Meal), nl,
     atomic_list_concat(Breads, Bread),
     write('Bread: '), write(Bread), nl,
     atomic_list_concat(Mains, Main),
-    write('Main: '), write(Main), nl,
-    atomic_list_concat(Cheeses, Cheese),
-    write('Cheese: '), write(Cheese), nl,
+    write('Main: '), (not(Main == '') -> write(Main); write(none)), nl,
+    atomic_list_concat(Cheeses, ',', Cheese),
+    write('Cheeses: '), (not(Cheese == '') -> write(Cheese); write(none)), nl,
     atomic_list_concat(Vegs, ',', Veg),
-    write('Vegs: '), write(Veg), nl,
+    write('Vegs: '), (not(Veg == '') -> write(Veg); write(none)), nl,
     atomic_list_concat(Sauces, ',', Sauce),
-    write('Sauces: '), write(Sauce), nl,
+    write('Sauces: '), (not(Sauce == '') -> write(Sauce); write(none)), nl,
     atomic_list_concat(Sides, ',', Side),
-    write('Sides: '), write(Side), nl,
+    write('Sides: '), (not(Side == '') -> write(Side); write(none)), nl,
     atomic_list_concat(Drinks, ',', Drink),
-    write('Drinks: '), write(Drink), nl.
+    write('Drinks: '), (not(Drink == '') -> write(Drink); write(none)), nl.
 
 /*
- * Flush all selected options from memory
+ * Clean all selected options from memory
  */
-flush :- retract(meal(_)), fail.
-flush :- retract(bread(_)), fail.
-flush :- retract(main(_)), fail.
-flush :- retract(cheese(_)), fail.
-flush :- retract(veg(_)), fail.
-flush :- retract(sauce(_)), fail.
-flush :- retract(side(_)), fail.
-flush :- retract(drink(_)), fail.
+clean :- retract(meal(_)), fail.
+clean :- retract(bread(_)), fail.
+clean :- retract(main(_)), fail.
+clean :- retract(cheese(_)), fail.
+clean :- retract(veg(_)), fail.
+clean :- retract(sauce(_)), fail.
+clean :- retract(side(_)), fail.
+clean :- retract(drink(_)), fail.
 
 /*
  * Start a Subway order
@@ -201,22 +215,16 @@ start :-
  * Execute a Subway order, normal by default
  */
 exec :-
-    write('Please choose your meal type (normal, veggie, healthy, vegan, or value)?'), nl,
-    read(Meal),
+    query_meal, meal(Meal),
     ((Meal == veggie) -> 
-        write('meal = '), write(Meal), nl,
-        meal_veggie, assertz(meal(veggie));
+        meal_veggie;
         (Meal == healthy) ->
-            write('meal = '), write(Meal), nl,
-            meal_healthy, assertz(meal(healthy));
+            meal_healthy;
             (Meal == vegan) ->
-                write('meal = '), write(Meal), nl,
-                meal_vegan, assertz(meal(vegan));
+                meal_vegan;
                 (Meal == value) ->
-                    write('meal = '), write(Meal), nl,
-                    meal_value, assertz(meal(value));
-                    write('meal = normal'), nl,
-                    meal_normal, assertz(meal(Meal))),
+                    meal_value;
+                    meal_normal),
     write('------------------------------------------------'), nl,
     write('-------------------YOUR-ORDER-------------------'), nl,
     write('------------------------------------------------'), nl,
@@ -229,7 +237,7 @@ end :-
     write('-----------------------------------------------'), nl,
     write('-------------------END-ORDER-------------------'), nl,
     write('-----------------------------------------------'),
-    flush. % flush all selected options
+    clean. % clean all selected options
 
 /*
  * Display the list item
@@ -241,6 +249,7 @@ options_list([X|Y]) :- write(X), write(', '), options_list(Y), !. % sublist item
 /*
  * Display the options for the list name
  */
+options(meals):- meals(L), write('meals = '), options_list(L).
 options(breads):- breads(L), write('breads = '), options_list(L).
 options(mains):- mains(L), write('mains = '), options_list(L).
 options(cheeses):- cheeses(L), write('cheeses = '), options_list(L).
@@ -253,6 +262,7 @@ options(drinks):- drinks(L), write('drinks = '), options_list(L).
 /*
  * Select an option
  */
+selected(X, meals) :- meals(L), member(X, L), write('meal = '), write(X), !.
 selected(X, breads) :- breads(L), member(X, L), write('bread = '), write(X), !.
 selected(X, mains) :- mains(L), member(X, L), write('main = '), write(X), !.
 selected(X, cheeses) :- cheeses(L), member(X, L), write('cheese = '), write(X), !.
@@ -265,11 +275,12 @@ selected(X, drinks) :- drinks(L), member(X, L), write('drink = '), write(X), !.
 /*
  * Possible choice of options for each category
  */
+meals([normal, veggie, healthy, vegan, value]).
 breads([italian_wheat, hearty_italian, honey_oat, parmesan_oregano, multigrain, flat_bread]).
-mains([ham, chicken, tuna, turkey, roast_beef, meatball, egg_mayo, italian_bmt, steak_and_cheese, veggie]).
-cheeses([american, monterrey, none]).
-vegs([cucumbers, green_bell_peppers, lettuce, red_onions, tomatoes, black_olives, jalapenos, pickles]).
-sauces([chipotle_southwest, ranch, bbq, chilli_sauce, tomato_sauce, redwine, mayonnaise, vinegar]).
-healthy_sauces([chipotle_southwest, ranch, tomato_sauce, redwine, vinegar]).
-sides([chips, cookies, hashbrowns, fruit_crisps, yogurt]).
-drinks([fountain, mineral_water, orange_juice, green_tea, coffee, tea]).
+mains([ham, chicken, tuna, turkey, roast_beef, meatball, egg_mayo, italian_bmt, steak_and_cheese]).
+cheeses([american, monterey, feta, mozzarella, cheddar, pepperjack, provolone, swiss, none]).
+vegs([cucumbers, green_bell_peppers, lettuce, red_onions, tomatoes, black_olives, jalapenos, pickles, none]).
+sauces([chipotle_southwest, ranch, bbq, chilli_sauce, tomato_sauce, redwine, mayonnaise, vinegar, none]).
+healthy_sauces([chipotle_southwest, ranch, tomato_sauce, redwine, vinegar, none]).
+sides([chips, cookies, hashbrowns, fruit_crisps, yogurt, none]).
+drinks([fountain, mineral_water, orange_juice, green_tea, coffee, tea, none]).
