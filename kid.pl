@@ -24,7 +24,7 @@ see(["Did you see pictures", "Did you see blocks", "Did you see alphabets",
 learn(["Did you learn math", "Did you learn English", "Did you learn Chinese",
     "Did you learn art", "Did you learn singing", "Did you learn drawing"]).
 behave(["Did you say 'hi' to your teachers", "Did you say 'thank you' to your teacher",
-    "Did you say 'please'", "Did you help clean up", "Did you say 'goodbye' to your friends"]).
+    "Did you say 'please' when asking", "Did you help clean up", "Did you say 'goodbye' to your friends"]).
 
 
 /*
