@@ -35,8 +35,7 @@ start :-
     write('---------------------START---------------------'), nl,
     write('-----------------------------------------------'), nl,
     write('How was your day my kid?'), nl,
-    query_unasked_activity,
-    end.
+    query_unasked_activity.
 
 /*
  * End asking the kid questions
@@ -59,7 +58,9 @@ clean :-
 /*
  * Check the activity list, if it is empty, then end asking qestions
  */
-query_activity([]) :- nl, write('Hope you will have a better day tomorrow!'), nl.
+query_activity([]) :- 
+    nl, write('Wish you a better day tomorrow!'),
+    nl, end.
 
 /*
  * Check the activity list, if it is not empty,
@@ -73,7 +74,10 @@ query_activity(L) :-
         answer_yes(X);
         (Answer == no) ->
             answer_no(X);
-            end).
+            (Answer == quit) ->
+                end;
+                write('---Invalid answer, please answer again!---'),
+                nl, query_activity(L)).
 
 
 /*
@@ -146,7 +150,10 @@ check_unasked_follow_up(X) :-
         assertz(asked(Y));
         (Answer == no) ->
             assertz(asked(Y));
-            end),
+            (Answer == quit) ->
+                end;
+                write('---Invalid answer, please answer again!---'),
+                nl, check_unasked_follow_up(X)),
     next_follow_up(Y).
 
 /*
