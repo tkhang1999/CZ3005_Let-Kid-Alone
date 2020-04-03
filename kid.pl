@@ -31,7 +31,7 @@ behave(["Did you say 'hi' to your teachers", "Did you say 'thank you' to your te
  * Start to ask the kid about his/her day
  */
 start :-
-    write("-----------------------------------------------""), nl,
+    write("-----------------------------------------------"), nl,
     write("---------------------START---------------------"), nl,
     write("-----------------------------------------------"), nl,
     write("How was your day my kid?"), nl,
