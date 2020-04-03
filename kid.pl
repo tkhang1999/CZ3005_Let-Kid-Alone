@@ -6,53 +6,26 @@
 
 
 /*
- * Possible choice of options for activity
+ * List of all available activities
  */
 activity([play, eat, do, see, learn, behave]).
 
-/*
- * Possible choice of options for each activity
+/* 
+ * List of all related questions for each activity
  */
-play(["Did you play with your friends", "Did you play toys", "Did you play trains", 
-    "Did you play cars", "Did you play sandbox", "Did you play teddy bears"]).
-eat(["Did you eat cheerios", "Did you eat candy", "Did you eat sandwich",
+play(["Did you play toys", "Did you play cars", "Did you play teddy bears",
+    "Did you play with friends", "Did you play sandbox", "Did you play trains"]).
+eat(["Did you eat candy", "Did you eat cheerios", "Did you eat sandwich",
     "Did you eat toffee", "Did you eat veggies", "Did you eat fries"]).
-do(["Did you build anything", "Did you draw anything", "Did you wash hand",
-    "Did you use fork or spoon", "Did you make any origami", "Did you exercise"]).
+do(["Did you build anything", "Did you make any origami", "Did you wash hand",
+    "Did you use fork or spoon", "Did you draw anything", "Did you exercise"]).
 see(["Did you see pictures", "Did you see blocks", "Did you see alphabets",
     "Did you see playmat", "Did you see cars", "Did you see cake"]).
 learn(["Did you learn math", "Did you learn English", "Did you learn Chinese",
     "Did you learn art", "Did you learn singing", "Did you learn drawing"]).
-behave(["Did you say 'hi' to your teachers", "Did you say 'thank you' to your teacher",
-    "Did you say 'please' when asking", "Did you help clean up", "Did you say 'goodbye' to your friends"]).
-
-
-/*
- * Start to ask the kid about his/her day
- */
-start :-
-    write("-----------------------------------------------"), nl,
-    write("---------------------START---------------------"), nl,
-    write("-----------------------------------------------"), nl,
-    write("How was your day my kid?"), nl,
-    query_unasked_activity.
-
-/*
- * End asking the kid questions
- */
-end :-
-    write("-----------------------------------------------"), nl,
-    write("----------------------END----------------------"), nl,
-    write("-----------------------------------------------"), nl,
-    clean, abort.
-
-/*
- * Clean all saved data from memory
- */
-clean :- 
-    retractall(yes(_)),
-    retractall(no(_)),
-    retractall(asked(_)).
+behave(["Did you say 'please' when asking", "Did you help clean up the class",
+    "Did you say 'hi' to teachers", "Did you say 'thank you' to teachers", 
+    "Did you say 'goodbye' to friends", "Did you share snacks with friends"]).
 
 
 /*
@@ -87,13 +60,15 @@ query_activity(L) :-
  * Handle yes and no answers for each activity individually, 
  * 
  * if the answer is yes, save it to the "yes" predicate,
- * ans start asking follow up questions in that activity
+ * and start asking follow up questions in that activity
  * 
  * else, save the no answer to the "no" predicate,
  * and move on to query the kid about unasked activities
  */
-answer_yes(X) :- assertz(yes(X)), first_follow_up(X, L), query_unasked_follow_up(L).
-answer_no(X) :- assertz(no(X)), query_unasked_activity.
+answer_yes(X) :- 
+    assertz(yes(X)), first_follow_up(X, L), query_unasked_follow_up(L).
+answer_no(X) :- 
+    assertz(no(X)), query_unasked_activity.
 
 /*
  * Query the unasked activity list to the kid
@@ -103,13 +78,13 @@ query_unasked_activity :- unasked_activity_list(L), query_activity(L).
 /*
  * Get a list of unasked activities
  */
-unasked_activity_list(L) :- findnsols(100, X, unasked_activity(X), L).
+unasked_activity_list(L) :- findnsols(6, X, unasked_activity(X), L).
 
 /*
  * Return random unasked activity
  */
 unasked_activity(X) :- 
-    activity(A), findnsols(100, Y, yes(Y), Yes), findnsols(100, N, no(N), No), 
+    activity(A), findnsols(6, Y, yes(Y), Yes), findnsols(6, N, no(N), No), 
     append(Yes, No, Asked), list_to_set(A, S), list_to_set(Asked, H), 
     subtract(S, H, Unasked), random_member(X, Unasked).
 
@@ -117,14 +92,14 @@ unasked_activity(X) :-
 /*
  * Get a list of follow up questions related to the activity X
  */
-first_follow_up(X, L) :- findnsols(100, Y, related(X, Y), L).
+first_follow_up(X, L) :- findnsols(6, Y, related(X, Y), L).
 
 /*
  * Get a list of unasked follow up questions
  * and proceed to check these unasked questions
  */
 query_unasked_follow_up(L) :-
-    findnsols(100, X, asked(X), Asked), list_to_set(L, S), list_to_set(Asked, A),
+    findnsols(6, X, asked(X), Asked), list_to_set(L, S), list_to_set(Asked, A),
     subtract(S, A, Unasked), check_unasked_follow_up(Unasked).
 
 
@@ -165,7 +140,18 @@ next_follow_up(X) :- options_follow_up(X, L), query_unasked_follow_up(L).
 /*
  * Get all options for follow up questions related with question X
  */
-options_follow_up(X, L) :- findnsols(100, Y, related_follow_up(X, Y), L).
+options_follow_up(X, L) :- findnsols(6, Y, related_follow_up(X, Y), L).
+
+/*
+ * Check if question Y is related to the same activity with question X
+ * and question Y is an unasked question
+ */
+related_follow_up(X, Y) :- eat(L), member(X, L), member(Y, L), \+asked(Y).
+related_follow_up(X, Y) :- play(L), member(X, L), member(Y, L), \+asked(Y).
+related_follow_up(X, Y) :- do(L), member(X, L), member(Y, L), \+asked(Y).
+related_follow_up(X, Y) :- see(L), member(X, L), member(Y, L), \+asked(Y).
+related_follow_up(X, Y) :- learn(L), member(X, L), member(Y, L), \+asked(Y).
+related_follow_up(X, Y) :- behave(L), member(X, L), member(Y, L), \+asked(Y).
 
 
 /*
@@ -180,11 +166,28 @@ related(behave, X) :- behave(L), random_member(X, L).
 
 
 /*
- * Check if two follow up questions are related to an activity
+ * Start to ask the kid about his/her day
  */
-related_follow_up(X, Y) :- eat(L), member(X, L), member(Y, L).
-related_follow_up(X, Y) :- play(L), member(X, L), member(Y, L).
-related_follow_up(X, Y) :- do(L), member(X, L), member(Y, L).
-related_follow_up(X, Y) :- see(L), member(X, L), member(Y, L).
-related_follow_up(X, Y) :- learn(L), member(X, L), member(Y, L).
-related_follow_up(X, Y) :- behave(L), member(X, L), member(Y, L).
+start :-
+    write("-----------------------------------------------"), nl,
+    write("---------------------START---------------------"), nl,
+    write("-----------------------------------------------"), nl,
+    write("How was your day my kid?"), nl,
+    query_unasked_activity.
+
+/*
+ * End asking the kid questions
+ */
+end :-
+    write("-----------------------------------------------"), nl,
+    write("----------------------END----------------------"), nl,
+    write("-----------------------------------------------"), nl,
+    clean, abort.
+
+/*
+ * Clean all saved data from memory
+ */
+clean :- 
+    retractall(yes(_)),
+    retractall(no(_)),
+    retractall(asked(_)).
