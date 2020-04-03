@@ -33,7 +33,8 @@ start :-
     write('-----------------------------------------------'), nl,
     write('---------------------START---------------------'), nl,
     write('-----------------------------------------------'), nl,
-    query_activity([behave]),
+    write('How was your day my kid?'), nl,
+    query_unasked_activity,
     end.
 
 /*
@@ -57,15 +58,15 @@ clean :-
 /*
  * Check the activity list, if it is empty, then end asking qestions
  */
-query_activity([]) :- nl, write('END OF ASKING QUESTIONS!'), nl, nl.
+query_activity([]) :- nl, write('Hope you will have a better day tomorrow!'), nl.
 
 /*
  * Check the activity list, if it is not empty,
  * then query the kid about this activity
  */
 query_activity(L) :-
-    member(X, L), write('Did you '), write(X),
-    write(' well at school'), write('? (yes/no/quit): '),
+    member(X, L), nl, write('Did you '), write(X),
+    write(' well at school'), write('? (yes/no/quit)'), nl,
     read(Answer),
     ((Answer == yes) ->
         answer_yes(X);
@@ -90,13 +91,12 @@ answer(X) :- no(X), answer_no(X).
  * and move on to query the kid about unasked activities
  */
 answer_yes(X) :- assertz(yes(X)), first_follow_up(X, L), query_unasked_follow_up(L).
-answer_no(X) :- assertz(no(X)), query_unasked_activity().
+answer_no(X) :- assertz(no(X)), query_unasked_activity.
 
 /*
  * Query the unasked activity list to the kid
  */
-query_unasked_activity() :-
-    unasked_activity_list(L), query_activity(L).
+query_unasked_activity :- unasked_activity_list(L), query_activity(L).
 
 /*
  * Get a list of unasked activities
@@ -131,7 +131,7 @@ query_unasked_follow_up(L) :-
  * if the list is empty, proceed to query the kid about
  * other unasked activities
  */
-check_unasked_follow_up([]) :- query_unasked_activity().
+check_unasked_follow_up([]) :- query_unasked_activity.
 
 /*
  * Check the list of unasked follow up questions list,
@@ -161,8 +161,8 @@ options_follow_up(X, L) :- findnsols(100, Y, related_follow_up(X, Y), L).
 /*
  * Check if a question is related to an activity
  */
-related(play, X):- eat(L), random_member(X, L).
-related(eat, X):- play(L), random_member(X, L).
+related(play, X):- play(L), random_member(X, L).
+related(eat, X):- eat(L), random_member(X, L).
 related(do, X):- do(L), random_member(X, L).
 related(see, X):- see(L), random_member(X, L).
 related(learn, X):- learn(L), random_member(X, L).
@@ -178,16 +178,3 @@ related_follow_up(X, Y) :- do(L), member(X, L), member(Y, L).
 related_follow_up(X, Y) :- see(L), member(X, L), member(Y, L).
 related_follow_up(X, Y) :- learn(L), member(X, L), member(Y, L).
 related_follow_up(X, Y) :- behave(L), member(X, L), member(Y, L).
-
-/*
- * List of 'yes' activities
- */
-yes(nothing).
-/*
- * List of 'no' activities
- */
-no(nothing).
-/*
- * List of 'asked' questions
- */
-asked(nothing).
