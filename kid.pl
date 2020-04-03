@@ -99,7 +99,7 @@ first_follow_up(X, L) :- findnsols(6, Y, related(X, Y), L).
  * and proceed to check these unasked questions
  */
 query_unasked_follow_up(L) :-
-    findnsols(6, X, asked(X), Asked), list_to_set(L, S), list_to_set(Asked, A),
+    findnsols(36, X, asked(X), Asked), list_to_set(L, S), list_to_set(Asked, A),
     subtract(S, A, Unasked), check_unasked_follow_up(Unasked).
 
 
