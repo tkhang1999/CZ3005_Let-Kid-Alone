@@ -1,5 +1,6 @@
 /*
- * Declare dynamic predicates to store related topic, yes/no answers, and already asked questions
+ * Declare dynamic predicates to store related topic, 
+ * yes/no answers, and already asked questions
  */
 :- dynamic yes/1, no/1, asked/1.
 
@@ -161,7 +162,7 @@ options_follow_up(X, L) :- findnsols(100, Y, related_follow_up(X, Y), L).
 
 
 /*
- * Check if a question is related to an activity
+ * Get a random question form a topic
  */
 related(play, X):- play(L), random_member(X, L).
 related(eat, X):- eat(L), random_member(X, L).
