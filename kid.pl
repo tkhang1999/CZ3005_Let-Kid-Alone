@@ -84,12 +84,6 @@ query_activity(L) :-
 
 
 /*
- * Handle the answer from the kid about the activity, either yes or no
- */
-answer(X) :- yes(X), answer_yes(X).
-answer(X) :- no(X), answer_no(X).
-
-/*
  * Handle yes and no answers for each activity individually, 
  * 
  * if the answer is yes, save it to the "yes" predicate,
