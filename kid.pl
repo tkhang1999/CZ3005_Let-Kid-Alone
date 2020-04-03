@@ -31,19 +31,19 @@ behave(["Did you say 'hi' to your teachers", "Did you say 'thank you' to your te
  * Start to ask the kid about his/her day
  */
 start :-
-    write('-----------------------------------------------'), nl,
-    write('---------------------START---------------------'), nl,
-    write('-----------------------------------------------'), nl,
-    write('How was your day my kid?'), nl,
+    write("-----------------------------------------------""), nl,
+    write("---------------------START---------------------"), nl,
+    write("-----------------------------------------------"), nl,
+    write("How was your day my kid?"), nl,
     query_unasked_activity.
 
 /*
  * End asking the kid questions
  */
 end :-
-    write('-----------------------------------------------'), nl,
-    write('----------------------END----------------------'), nl,
-    write('-----------------------------------------------'), nl,
+    write("-----------------------------------------------"), nl,
+    write("----------------------END----------------------"), nl,
+    write("-----------------------------------------------"), nl,
     clean, abort.
 
 /*
@@ -59,7 +59,7 @@ clean :-
  * Check the activity list, if it is empty, then end asking questions
  */
 query_activity([]) :- 
-    nl, write('Wish you a better day tomorrow!'),
+    nl, write("Wish you a better day tomorrow!"),
     nl, end.
 
 /*
@@ -70,8 +70,8 @@ query_activity([]) :-
  * otherwise, kid must answer again
  */
 query_activity(L) :-
-    member(X, L), nl, write('Did you '), write(X),
-    write(' well at school'), write('? (yes/no/quit)'), nl,
+    member(X, L), nl, write("Did you "), write(X),
+    write(" well at school"), write("? (yes/no/quit)"), nl,
     read(Answer),
     ((Answer == yes) ->
         answer_yes(X);
@@ -79,7 +79,7 @@ query_activity(L) :-
             answer_no(X);
             (Answer == quit) ->
                 end;
-                write('---Invalid answer, please answer again!---'),
+                write("---Invalid answer, please answer again!---"),
                 nl, query_activity(L)).
 
 
@@ -92,10 +92,10 @@ answer(X) :- no(X), answer_no(X).
 /*
  * Handle yes and no answers for each activity individually, 
  * 
- * if the answer is yes, save it to the 'yes' predicate,
+ * if the answer is yes, save it to the "yes" predicate,
  * ans start asking follow up questions in that activity
  * 
- * else, save the no answer to the 'no' predicate,
+ * else, save the no answer to the "no" predicate,
  * and move on to query the kid about unasked activities
  */
 answer_yes(X) :- assertz(yes(X)), first_follow_up(X, L), query_unasked_follow_up(L).
@@ -150,7 +150,7 @@ check_unasked_follow_up([]) :- query_unasked_activity.
  * otherwise, kid must answer again
  */
 check_unasked_follow_up(X) :-
-    member(Y, X), write(Y), write('? (yes/no/quit): '),
+    member(Y, X), write(Y), write("? (yes/no/quit): "),
     read(Answer),
     ((Answer == yes) -> 
         assertz(asked(Y));
@@ -158,7 +158,7 @@ check_unasked_follow_up(X) :-
             assertz(asked(Y));
             (Answer == quit) ->
                 end;
-                write('---Invalid answer, please answer again!---'),
+                write("---Invalid answer, please answer again!---"),
                 nl, check_unasked_follow_up(X)),
     next_follow_up(Y).
 
