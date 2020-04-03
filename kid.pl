@@ -141,9 +141,11 @@ check_unasked_follow_up([]) :- query_unasked_activity.
 check_unasked_follow_up(X) :-
     member(Y, X), write(Y), write('? (yes/no/quit): '),
     read(Answer),
-    ((Answer == quit) -> 
-        end;
-        assertz(asked(Y))),
+    ((Answer == yes) -> 
+        assertz(asked(Y));
+        (Answer == no) ->
+            assertz(asked(Y));
+            end),
     next_follow_up(Y).
 
 /*
