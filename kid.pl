@@ -29,14 +29,14 @@ behave(["Did you say 'please' when asking", "Did you help clean up the class",
 
 
 /*
- * Check the activity list, if it is empty, then end asking questions
+ * Query the activity list, if it is empty, then end asking questions
  */
 query_activity([]) :- 
     nl, write("Wish you a better day tomorrow!"),
     nl, end.
 
 /*
- * Check the activity list, if it is not empty,
+ * Query the activity list, if it is not empty,
  * then query the kid about this activity
  * 
  * Kid must reply with a valid answer (yes/no/quit);
@@ -94,31 +94,23 @@ unasked_activity(X) :-
  */
 first_follow_up(X, L) :- findnsols(6, Y, related(X, Y), L).
 
-/*
- * Get a list of unasked follow up questions
- * and proceed to check these unasked questions
- */
-query_unasked_follow_up(L) :-
-    findnsols(36, X, asked(X), Asked), list_to_set(L, S), list_to_set(Asked, A),
-    subtract(S, A, Unasked), check_unasked_follow_up(Unasked).
-
 
 /*
- * Check the list of unasked follow up questions list,
+ * Query the list of unasked follow up questions list,
  * if the list is empty, proceed to query the kid about
  * other unasked activities
  */
-check_unasked_follow_up([]) :- query_unasked_activity.
+query_unasked_follow_up([]) :- query_unasked_activity.
 
 /*
- * Check the list of unasked follow up questions list,
+ * Query the list of unasked follow up questions list,
  * if the list is not empty, query the kid with a question
  * and then proceed to ask another one
  * 
  * Kid must reply with a valid answer (yes/no/quit);
  * otherwise, kid must answer again
  */
-check_unasked_follow_up(X) :-
+query_unasked_follow_up(X) :-
     member(Y, X), write(Y), write("? (yes/no/quit): "),
     read(Answer),
     ((Answer == yes) -> 
@@ -128,7 +120,7 @@ check_unasked_follow_up(X) :-
             (Answer == quit) ->
                 end;
                 write("---Invalid answer, please answer again!---"),
-                nl, check_unasked_follow_up(X)),
+                nl, query_unasked_follow_up(X)),
     next_follow_up(Y).
 
 /*
