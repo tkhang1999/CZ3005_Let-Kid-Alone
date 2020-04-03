@@ -56,7 +56,7 @@ clean :-
 
 
 /*
- * Check the activity list, if it is empty, then end asking qestions
+ * Check the activity list, if it is empty, then end asking questions
  */
 query_activity([]) :- 
     nl, write('Wish you a better day tomorrow!'),
@@ -65,6 +65,9 @@ query_activity([]) :-
 /*
  * Check the activity list, if it is not empty,
  * then query the kid about this activity
+ * 
+ * Kid must reply with a valid answer (yes/no/quit);
+ * otherwise, kid must answer again
  */
 query_activity(L) :-
     member(X, L), nl, write('Did you '), write(X),
@@ -141,7 +144,10 @@ check_unasked_follow_up([]) :- query_unasked_activity.
 /*
  * Check the list of unasked follow up questions list,
  * if the list is not empty, query the kid with a question
- * and then proceed to ask another one.
+ * and then proceed to ask another one
+ * 
+ * Kid must reply with a valid answer (yes/no/quit);
+ * otherwise, kid must answer again
  */
 check_unasked_follow_up(X) :-
     member(Y, X), write(Y), write('? (yes/no/quit): '),
