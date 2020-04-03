@@ -67,6 +67,7 @@ query_activity(L) :-
  */
 answer_yes(X) :- 
     assertz(yes(X)), first_follow_up(X, L), query_unasked_follow_up(L).
+
 answer_no(X) :- 
     assertz(no(X)), query_unasked_activity.
 
@@ -94,6 +95,16 @@ unasked_activity(X) :-
  */
 first_follow_up(X, L) :- findnsols(6, Y, related(X, Y), L).
 
+/*
+ * Get a random question form a topic
+ */
+related(play, X):- play(L), random_member(X, L).
+related(eat, X):- eat(L), random_member(X, L).
+related(do, X):- do(L), random_member(X, L).
+related(see, X):- see(L), random_member(X, L).
+related(learn, X):- learn(L), random_member(X, L).
+related(behave, X) :- behave(L), random_member(X, L).
+
 
 /*
  * Query the list of unasked follow up questions list,
@@ -110,18 +121,18 @@ query_unasked_follow_up([]) :- query_unasked_activity.
  * Kid must reply with a valid answer (yes/no/quit);
  * otherwise, kid must answer again
  */
-query_unasked_follow_up(X) :-
-    member(Y, X), write(Y), write("? (yes/no/quit): "),
+query_unasked_follow_up(L) :-
+    member(X, L), write(L), write("? (yes/no/quit): "),
     read(Answer),
     ((Answer == yes) -> 
-        assertz(asked(Y));
+        assertz(asked(X));
         (Answer == no) ->
-            assertz(asked(Y));
+            assertz(asked(X));
             (Answer == quit) ->
                 end;
                 write("---Invalid answer, please answer again!---"),
-                nl, query_unasked_follow_up(X)),
-    next_follow_up(Y).
+                nl, query_unasked_follow_up(L)),
+    next_follow_up(X).
 
 /*
  * Get a list of all options for next follow up questions,
@@ -144,17 +155,6 @@ related_follow_up(X, Y) :- do(L), member(X, L), member(Y, L), \+asked(Y).
 related_follow_up(X, Y) :- see(L), member(X, L), member(Y, L), \+asked(Y).
 related_follow_up(X, Y) :- learn(L), member(X, L), member(Y, L), \+asked(Y).
 related_follow_up(X, Y) :- behave(L), member(X, L), member(Y, L), \+asked(Y).
-
-
-/*
- * Get a random question form a topic
- */
-related(play, X):- play(L), random_member(X, L).
-related(eat, X):- eat(L), random_member(X, L).
-related(do, X):- do(L), random_member(X, L).
-related(see, X):- see(L), random_member(X, L).
-related(learn, X):- learn(L), random_member(X, L).
-related(behave, X) :- behave(L), random_member(X, L).
 
 
 /*
