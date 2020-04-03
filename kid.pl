@@ -1,6 +1,6 @@
 /*
- * Declare dynamic predicates to store related topic, 
- * yes/no answers, and already asked questions
+ * Declare dynamic predicates to store 
+ * yes/no answers for activity query, and already asked questions
  */
 :- dynamic yes/1, no/1, asked/1.
 
