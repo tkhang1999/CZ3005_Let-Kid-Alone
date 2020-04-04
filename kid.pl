@@ -31,9 +31,7 @@ behave(["Did you say 'please' when asking", "Did you help clean up the class",
 /*
  * Query the activity list, if it is empty, then end asking questions
  */
-query_activity([]) :- 
-    nl, write("Wish you a better day tomorrow!"),
-    nl, end.
+query_activity([]) :- end.
 
 /*
  * Query the activity list, if it is not empty,
@@ -57,37 +55,34 @@ query_activity(L) :-
 
 
 /*
- * Handle yes and no answers for each activity individually, 
- * 
- * if the answer is yes, save it to the "yes" predicate,
+ * Handle a 'yes' answer to an activity query, 
+ * save it to the "yes" predicate,
  * and start asking follow up questions in that activity
- * 
- * else, save the no answer to the "no" predicate,
- * and move on to query the kid about unasked activities
  */
 answer_yes(X) :- 
     assertz(yes(X)), first_follow_up(X, L), query_unasked_follow_up(L).
 
+/*
+ * Handle a 'no' answer to an activity query, 
+ * save the no answer to the "no" predicate,
+ * and move on to query the kid about unasked activities
+ */
 answer_no(X) :- 
     assertz(no(X)), query_unasked_activity.
 
 /*
- * Query the unasked activity list to the kid
+ * Obtain a list of unasked activities and
+ * query the unasked activity list to the kid
  */
-query_unasked_activity :- unasked_activity_list(L), query_activity(L).
+query_unasked_activity :- 
+    findnsols(6, X, unasked_activity(X), L), query_activity(L).
 
 /*
- * Get a list of unasked activities
- */
-unasked_activity_list(L) :- findnsols(6, X, unasked_activity(X), L).
-
-/*
- * Return random unasked activity
+ * Check if an activity is unasked
+ * (not in both 'yes' and 'no' predicates)
  */
 unasked_activity(X) :- 
-    activity(A), findnsols(6, Y, yes(Y), Yes), findnsols(6, N, no(N), No), 
-    append(Yes, No, Asked), list_to_set(A, S), list_to_set(Asked, H), 
-    subtract(S, H, Unasked), random_member(X, Unasked).
+    activity(L), member(X, L), \+yes(X), \+no(X).
 
 
 /*
@@ -96,7 +91,7 @@ unasked_activity(X) :-
 first_follow_up(X, L) :- findnsols(6, Y, related(X, Y), L).
 
 /*
- * Get a random question form a topic
+ * Get a random question from a topic
  */
 related(play, X):- play(L), random_member(X, L).
 related(eat, X):- eat(L), random_member(X, L).
@@ -116,7 +111,7 @@ query_unasked_follow_up([]) :- query_unasked_activity.
 /*
  * Query the list of unasked follow up questions list,
  * if the list is not empty, query the kid with a question
- * and then proceed to ask another one
+ * and then proceed to ask follow up questions
  * 
  * Kid must reply with a valid answer (yes/no/quit);
  * otherwise, kid must answer again
@@ -131,12 +126,12 @@ query_unasked_follow_up(L) :-
             (Answer == quit) ->
                 end;
                 write("---Invalid answer, please answer again!---"),
-                nl, query_unasked_follow_up(X)),
+                nl, query_unasked_follow_up(L)),
     next_follow_up(X).
 
 /*
  * Get a list of all options for next follow up questions,
- * then proceed to query next unasked follow up questions
+ * then continue to query unasked follow up questions
  */
 next_follow_up(X) :- options_follow_up(X, L), query_unasked_follow_up(L).
 
@@ -171,10 +166,13 @@ start :-
  * End asking the kid questions
  */
 end :-
+    nl, 
+    write("Wish you a better day tomorrow!"), nl, 
     write("-----------------------------------------------"), nl,
     write("----------------------END----------------------"), nl,
     write("-----------------------------------------------"), nl,
-    clean, abort.
+    clean, 
+    abort.
 
 /*
  * Clean all saved data from memory
