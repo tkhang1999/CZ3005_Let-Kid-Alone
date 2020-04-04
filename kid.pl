@@ -1,8 +1,8 @@
 /*
  * Declare dynamic predicates to store 
- * yes/no answers for activity query, and already asked questions
+ * already asked activity and already asked questions
  */
-:- dynamic yes/1, no/1, asked/1.
+:- dynamic asked_activity/1, asked_question/1.
 
 
 /*
@@ -56,19 +56,19 @@ query_activity(L) :-
 
 /*
  * Handle a 'yes' answer to an activity query, 
- * save it to the "yes" predicate,
+ * save it to the "asked_activity" predicate,
  * and start asking follow up questions in that activity
  */
 answer_yes(X) :- 
-    assertz(yes(X)), first_follow_up(X, L), query_unasked_follow_up(L).
+    assertz(asked_activity(X)), first_follow_up(X, L), query_unasked_follow_up(L).
 
 /*
  * Handle a 'no' answer to an activity query, 
- * save the no answer to the "no" predicate,
+ * save the no answer to the "asked_activity" predicate,
  * and move on to query the kid about unasked activities
  */
 answer_no(X) :- 
-    assertz(no(X)), query_unasked_activity.
+    assertz(asked_activity(X)), query_unasked_activity.
 
 /*
  * Obtain a list of unasked activities and
@@ -79,10 +79,10 @@ query_unasked_activity :-
 
 /*
  * Check if an activity is unasked
- * (not in both 'yes' and 'no' predicates)
+ * (not in the 'asked_activity' predicates)
  */
 unasked_activity(X) :- 
-    activity(L), member(X, L), \+yes(X), \+no(X).
+    activity(L), member(X, L), \+asked_activity(X).
 
 
 /*
@@ -120,9 +120,9 @@ query_unasked_follow_up(L) :-
     member(X, L), write(X), write("? (yes/no/quit): "),
     read(Answer),
     ((Answer == yes) -> 
-        assertz(asked(X));
+        assertz(asked_question(X));
         (Answer == no) ->
-            assertz(asked(X));
+            assertz(asked_question(X));
             (Answer == quit) ->
                 end;
                 write("---Invalid answer, please answer again!---"),
@@ -144,12 +144,18 @@ options_follow_up(X, L) :- findnsols(6, Y, related_follow_up(X, Y), L).
  * Check if question Y is related to the same activity with question X
  * and is an unasked question
  */
-related_follow_up(X, Y) :- eat(L), member(X, L), member(Y, L), \+asked(Y).
-related_follow_up(X, Y) :- play(L), member(X, L), member(Y, L), \+asked(Y).
-related_follow_up(X, Y) :- do(L), member(X, L), member(Y, L), \+asked(Y).
-related_follow_up(X, Y) :- see(L), member(X, L), member(Y, L), \+asked(Y).
-related_follow_up(X, Y) :- learn(L), member(X, L), member(Y, L), \+asked(Y).
-related_follow_up(X, Y) :- behave(L), member(X, L), member(Y, L), \+asked(Y).
+related_follow_up(X, Y) :- 
+    eat(L), member(X, L), member(Y, L), \+asked_question(Y).
+related_follow_up(X, Y) :- 
+    play(L), member(X, L), member(Y, L), \+asked_question(Y).
+related_follow_up(X, Y) :- 
+    do(L), member(X, L), member(Y, L), \+asked_question(Y).
+related_follow_up(X, Y) :- 
+    see(L), member(X, L), member(Y, L), \+asked_question(Y).
+related_follow_up(X, Y) :- 
+    learn(L), member(X, L), member(Y, L), \+asked_question(Y).
+related_follow_up(X, Y) :- 
+    behave(L), member(X, L), member(Y, L), \+asked_question(Y).
 
 
 /*
@@ -178,6 +184,5 @@ end :-
  * Clean all saved data from memory
  */
 clean :- 
-    retractall(yes(_)),
-    retractall(no(_)),
-    retractall(asked(_)).
+    retractall(asked_activity(_)),
+    retractall(asked_question(_)).
