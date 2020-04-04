@@ -122,7 +122,7 @@ query_unasked_follow_up([]) :- query_unasked_activity.
  * otherwise, kid must answer again
  */
 query_unasked_follow_up(L) :-
-    member(X, L), write(L), write("? (yes/no/quit): "),
+    member(X, L), write(X), write("? (yes/no/quit): "),
     read(Answer),
     ((Answer == yes) -> 
         assertz(asked(X));
@@ -131,7 +131,7 @@ query_unasked_follow_up(L) :-
             (Answer == quit) ->
                 end;
                 write("---Invalid answer, please answer again!---"),
-                nl, query_unasked_follow_up(L)),
+                nl, query_unasked_follow_up(X)),
     next_follow_up(X).
 
 /*
