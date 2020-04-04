@@ -35,7 +35,7 @@ query_activity([]) :- end.
 
 /*
  * Query the activity list, if it is not empty,
- * then query the kid about this activity
+ * then query the kid about an activity
  * 
  * Kid must reply with a valid answer (yes/no/quit);
  * otherwise, kid must answer again
@@ -110,7 +110,7 @@ query_unasked_follow_up([]) :- query_unasked_activity.
 
 /*
  * Query the list of unasked follow up questions list,
- * if the list is not empty, query the kid with a question
+ * if the list is not empty, query the kid about a question
  * and then proceed to ask follow up questions
  * 
  * Kid must reply with a valid answer (yes/no/quit);
@@ -136,13 +136,13 @@ query_unasked_follow_up(L) :-
 next_follow_up(X) :- options_follow_up(X, L), query_unasked_follow_up(L).
 
 /*
- * Get all options for follow up questions related with question X
+ * Get all options for follow up questions related with a question X
  */
 options_follow_up(X, L) :- findnsols(6, Y, related_follow_up(X, Y), L).
 
 /*
  * Check if question Y is related to the same activity with question X
- * and question Y is an unasked question
+ * and is an unasked question
  */
 related_follow_up(X, Y) :- eat(L), member(X, L), member(Y, L), \+asked(Y).
 related_follow_up(X, Y) :- play(L), member(X, L), member(Y, L), \+asked(Y).
