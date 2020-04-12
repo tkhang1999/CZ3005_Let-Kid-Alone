@@ -41,7 +41,7 @@ query_activity([]) :- end.
  * otherwise, kid must answer again
  */
 query_activity(L) :-
-    member(X, L), nl, write("Did you "), write(X),
+    random_member(X, L), nl, write("Did you "), write(X),
     write(" well at school"), write("? (yes/no/quit)"), nl,
     read(Answer),
     ((Answer == yes) ->
@@ -117,7 +117,7 @@ query_unasked_follow_up([]) :- query_unasked_activity.
  * otherwise, kid must answer again
  */
 query_unasked_follow_up(L) :-
-    member(X, L), write(X), write("? (yes/no/quit): "),
+    random_member(X, L), write(X), write("? (yes/no/quit): "),
     read(Answer),
     ((Answer == yes) -> 
         assertz(asked_question(X));
