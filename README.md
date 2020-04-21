@@ -20,6 +20,6 @@ Run `successionLine(X)` to find the new royal succession line.
 
 Run `start.` to start asking questions to the kid.
 
-4. `subway.pl`
+4. `SubwaySandwich.pl`
 
-Run `start.` to start making your subway order.
+Run `start.` to start making your Subway order.
